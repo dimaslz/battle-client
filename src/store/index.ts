@@ -2,6 +2,7 @@ import Vue from "vue";
 import Vuex from "vuex";
 import axios from "axios";
 import { uuid } from "@/utils";
+import { API_URL } from "../../env";
 
 Vue.use(Vuex);
 
@@ -20,19 +21,13 @@ interface GameState {
   state: {
     loading: boolean;
     error: boolean;
-  },
+  };
   roomId: string;
 }
 export default new Vuex.Store({
-  state: {
-    
-  },
-  mutations: {
-    
-  },
-  actions: {
-    
-  },
+  state: {},
+  mutations: {},
+  actions: {},
   modules: {
     me: {
       namespaced: true,
@@ -83,22 +78,22 @@ export default new Vuex.Store({
         },
         setLoading(state: GameState, loading: boolean) {
           state.state.loading = loading;
-        }
+        },
       },
       actions: {
         async createRoom({ commit }: any) {
           const roomId = uuid();
-          commit('setLoading', true);
+          commit("setLoading", true);
 
           await axios({
             method: "POST",
-            url: "http://localhost:3000/room",
+            url: `${API_URL}/room`,
             data: {
-              roomId
-            }
+              roomId,
+            },
           }).then(() => {
-            commit('setLoading', false);
-            commit('setRoomName', roomId);
+            commit("setLoading", false);
+            commit("setRoomName", roomId);
           });
 
           return roomId;
@@ -106,41 +101,44 @@ export default new Vuex.Store({
         async leaveRoom({ commit, state, rootState }: any) {
           const { roomId } = state;
           const userId = rootState.me.name;
-          
+
           await axios({
             method: "POST",
-            url: `http://localhost:3000/leave/${roomId}`,
-            data: {
-              userId
-            }
-          }).then(() => {
-            commit('setLoading', false);
-          });
-        },
-        async joinRoom({ commit, rootState, state }: any, { clientId, roomId }: any) {
-          const userId = rootState.me.name;
-
-          commit('setRoomName', roomId);
-          
-          return axios({
-            method: "POST",
-            url: `http://localhost:3000/join/${roomId}`,
+            url: `${API_URL}/leave/${roomId}`,
             data: {
               userId,
-              clientId
-            }
+            },
+          }).then(() => {
+            commit("setLoading", false);
+          });
+        },
+        async joinRoom(
+          { commit, rootState, state }: any,
+          { clientId, roomId }: any
+        ) {
+          const userId = rootState.me.name;
+
+          commit("setRoomName", roomId);
+
+          return axios({
+            method: "POST",
+            url: `${API_URL}/join/${roomId}`,
+            data: {
+              userId,
+              clientId,
+            },
           }).then(({ data }: any) => {
             if (data === null) {
-              commit('me/join', false, { root: true });
-              commit('opponent/setName', null, { root: true });
+              commit("me/join", false, { root: true });
+              commit("opponent/setName", null, { root: true });
             } else {
               const { joined, opponentId } = data;
-              commit('me/join', joined, { root: true });
-              commit('opponent/setName', opponentId, { root: true });
+              commit("me/join", joined, { root: true });
+              commit("opponent/setName", opponentId, { root: true });
             }
           });
-        }
+        },
       },
     },
-  }
+  },
 });
