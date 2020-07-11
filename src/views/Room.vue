@@ -188,11 +188,13 @@ export default Vue.extend({
       userId: (state: any) => state.me.name,
       joined: (state: any) => state.me.joined,
       opponentId: (state: any) => state.opponent.name,
-      roomId: (state: any) => state.game.roomId
+      roomId: (state: any) => state.game.roomId,
+      clientId: (state: any) => state.me.clientId
     })
   },
-  mounted() {
+  created() {
     setTimeout(() => {
+      console.log("clientId", this.clientId);
       this._joinRoom();
     }, 200);
 
@@ -256,6 +258,8 @@ export default Vue.extend({
       }
     });
     this.$socket.on("reset-game", () => {
+      this.$data.winner = false;
+      this.$data.loser = false;
       this.$data.opponentId = null;
       this.$data.score = 0;
       this.$data.opponentScore = 0;
@@ -278,9 +282,8 @@ export default Vue.extend({
   methods: {
     _joinRoom() {
       const { roomId } = this.$route.params;
-      const clientId = this.$socket.id;
 
-      this.joinRoom({ roomId, clientId }).then(() => {
+      this.joinRoom({ roomId }).then(() => {
         this.$data.loading = false;
         this.$data.room = roomId;
         this.$data.link = window.location.href;
@@ -341,13 +344,20 @@ export default Vue.extend({
     ...mapMutations("game", ["setRoomName"]),
     ...mapActions("game", ["createRoom", "leaveRoom", "joinRoom"])
   },
-  destroyed() {
+  async destroyed() {
+    await this.leaveRoom();
     this.$socket.off(`countdown-ping`);
     this.$socket.off(`joined`);
     this.$socket.off(`filled`);
     this.$socket.off(`start-game`);
     this.$socket.off(`reset-game`);
     this.$socket.off(`game-finished`);
+  },
+  watch: {
+    clientId: function() {
+      console.log("DDFF", this.clientId);
+      if (this.clientId) this._joinRoom();
+    }
   }
 });
 </script>

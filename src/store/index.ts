@@ -1,8 +1,8 @@
 import Vue from "vue";
 import Vuex from "vuex";
-import axios from "axios";
 import { uuid } from "@/utils";
-import { API_URL } from "../../env";
+import Api from "../api";
+const API = new Api();
 
 Vue.use(Vuex);
 
@@ -10,6 +10,7 @@ interface MeState {
   name: string;
   score: number;
   joined: boolean;
+  clientId: string;
 }
 
 interface OpponentState {
@@ -35,6 +36,7 @@ export default new Vuex.Store({
         name: null,
         score: 0,
         joined: false,
+        clientId: "",
       },
       mutations: {
         join(state: MeState, join: boolean) {
@@ -42,6 +44,9 @@ export default new Vuex.Store({
         },
         setName(state: MeState, name: string) {
           state.name = name;
+        },
+        setClientId(state: MeState, clientId: string) {
+          state.clientId = clientId;
         },
         updateScore(state: MeState) {
           state.score++;
@@ -81,20 +86,16 @@ export default new Vuex.Store({
         },
       },
       actions: {
-        async createRoom({ commit }: any) {
+        async createRoom({ commit, rootState }: any) {
           const roomId = uuid();
+          const userId = rootState.me.name;
+
           commit("setLoading", true);
 
-          await axios({
-            method: "POST",
-            url: `${API_URL}/room`,
-            data: {
-              roomId,
-            },
-          }).then(() => {
-            commit("setLoading", false);
-            commit("setRoomName", roomId);
-          });
+          await API.createRoom(roomId, userId);
+
+          commit("setLoading", false);
+          commit("setRoomName", roomId);
 
           return roomId;
         },
@@ -102,41 +103,29 @@ export default new Vuex.Store({
           const { roomId } = state;
           const userId = rootState.me.name;
 
-          await axios({
-            method: "POST",
-            url: `${API_URL}/leave/${roomId}`,
-            data: {
-              userId,
-            },
-          }).then(() => {
-            commit("setLoading", false);
-          });
+          await API.leaveRoom(roomId, userId);
+
+          commit("setLoading", false);
         },
-        async joinRoom(
-          { commit, rootState, state }: any,
-          { clientId, roomId }: any
-        ) {
+        async joinRoom({ commit, rootState, state }: any, { roomId }: any) {
           const userId = rootState.me.name;
+          const clientId = rootState.me.clientId;
+          console.log("clientId", clientId);
 
           commit("setRoomName", roomId);
 
-          return axios({
-            method: "POST",
-            url: `${API_URL}/join/${roomId}`,
-            data: {
-              userId,
-              clientId,
-            },
-          }).then(({ data }: any) => {
-            if (data === null) {
-              commit("me/join", false, { root: true });
-              commit("opponent/setName", null, { root: true });
-            } else {
-              const { joined, opponentId } = data;
-              commit("me/join", joined, { root: true });
-              commit("opponent/setName", opponentId, { root: true });
-            }
-          });
+          const data = await API.joinRoom(roomId, userId, clientId).then(
+            ({ data }: any) => data
+          );
+
+          if (data === null) {
+            commit("me/join", false, { root: true });
+            commit("opponent/setName", null, { root: true });
+          } else {
+            const { joined, opponentId } = data;
+            commit("me/join", joined, { root: true });
+            commit("opponent/setName", opponentId, { root: true });
+          }
         },
       },
     },

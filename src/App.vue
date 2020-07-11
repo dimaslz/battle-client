@@ -73,8 +73,7 @@ export default Vue.extend({
   },
   methods: {
     _createRoom() {
-      const clientId = this.$socket.id;
-      this.createRoom(clientId).then((roomId: string) => {
+      this.createRoom().then((roomId: string) => {
         this.$router.push(`/${roomId}`);
         this.$socket.emit("create", { roomId });
       });

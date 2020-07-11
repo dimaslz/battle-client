@@ -4,6 +4,7 @@ import "./registerServiceWorker";
 import router from "./router";
 import store from "./store";
 import socket from "./socket.plugin";
+import { mapMutations } from "vuex";
 
 // import SocketIO from "socket.io-client";
 // import VueSocketIO from 'vue-socket.io';
@@ -19,7 +20,7 @@ import socket from "./socket.plugin";
 // }));
 
 Vue.config.productionTip = false;
-Vue.use(socket)
+Vue.use(socket);
 
 new Vue({
   // sockets: {
@@ -30,12 +31,15 @@ new Vue({
   //       console.log('this method was fired by the socket server. eg: io.emit("customEmit", data)')
   //   }
   // },
-  // mounted() {
-  //   setTimeout(() => {
-  //     console.log("0d", io())
-  //   })
-  // },
+  mounted() {
+    this.$socket.on("connect", () => {
+      this.setClientId(this.$socket.id);
+    });
+  },
+  methods: {
+    ...mapMutations("me", ["setClientId"]),
+  },
   router,
   store,
-  render: h => h(App)
+  render: (h) => h(App),
 }).$mount("#app");
