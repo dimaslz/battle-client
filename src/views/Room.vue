@@ -163,14 +163,13 @@
 
 <script lang="ts">
 import Vue from "vue";
-import axios from "axios";
 import { mapState, mapMutations, mapActions } from "vuex";
 
 export default Vue.extend({
   data() {
     return {
-      cols: Array.from(Array(3).keys()),
-      rows: Array.from(Array(3).keys()),
+      cols: [] as number[],
+      rows: [] as number[],
       score: 0,
       opponentScore: 0,
       error: "",
@@ -193,11 +192,6 @@ export default Vue.extend({
     })
   },
   created() {
-    setTimeout(() => {
-      console.log("clientId", this.clientId);
-      this._joinRoom();
-    }, 200);
-
     this.$socket.on("countdown-ping", (data: any) => {
       if (this.$data.countdown < 0) {
         this.$data.countdown = "GO!";
@@ -258,6 +252,7 @@ export default Vue.extend({
       }
     });
     this.$socket.on("reset-game", () => {
+      this.createBoard();
       this.$data.winner = false;
       this.$data.loser = false;
       this.$data.opponentId = null;
@@ -280,6 +275,14 @@ export default Vue.extend({
     });
   },
   methods: {
+    createBoard() {
+      this.cols = [];
+      this.rows = [];
+      this.$nextTick(() => {
+        this.cols = Array.from(Array(3).keys());
+        this.rows = Array.from(Array(3).keys());
+      });
+    },
     _joinRoom() {
       const { roomId } = this.$route.params;
 
@@ -287,10 +290,10 @@ export default Vue.extend({
         this.$data.loading = false;
         this.$data.room = roomId;
         this.$data.link = window.location.href;
+        this.createBoard();
       });
     },
     fill($event: any, row: number, col: number) {
-      // const clientId = this.$socket.id;
       const { roomId } = this.$route.params;
 
       const element = $event.target;
