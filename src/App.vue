@@ -1,5 +1,16 @@
 <template>
   <div id="app" class="flex flex-col items-center w-full h-full">
+    <div
+      class="ForkMeOnGithub fixed top-0 right-0 mt-10 -mr-12 transform rotate-45 bg-gray-900"
+    >
+      <a
+        href="https://github.com/dimaslz/battle-client"
+        target="_blank"
+        class="flex text-gray-300 hover:text-gray-100 px-10 py-1 border border-white my-1 border-dashed"
+      >
+        Fork me on GitHub
+      </a>
+    </div>
     <div class="text-3xl p-12 uppercase">
       Battle Click
     </div>
