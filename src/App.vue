@@ -1,5 +1,8 @@
 <template>
-  <div id="app" class="flex flex-col items-center w-full h-full">
+  <div
+    id="app"
+    class="flex flex-col items-center w-full h-full antialiased text-sm font-sans"
+  >
     <div
       class="ForkMeOnGithub fixed top-0 right-0 mt-10 -mr-12 transform rotate-45 bg-gray-900"
     >
@@ -122,14 +125,16 @@ export default Vue.extend({
   },
   computed: {
     ...mapState("me", {
-      userId: (state: any) => state.name
+      userId: (state: any): string => state.name
     })
   },
   methods: {
     _createRoom() {
+      this.loading = true;
       this.createRoom(this.size).then((roomId: string) => {
         this.$router.push(`/${roomId}`);
         this.$socket.emit("create", { roomId });
+        this.loading = false;
       });
     },
     ...mapActions("game", ["createRoom"]),
@@ -145,28 +150,5 @@ html {
   width: 100%;
   height: 100%;
   min-height: 100vh;
-  margin: 0;
-  box-sizing: border-box;
-}
-
-#app {
-  font-family: Avenir, Helvetica, Arial, sans-serif;
-  -webkit-font-smoothing: antialiased;
-  -moz-osx-font-smoothing: grayscale;
-  text-align: center;
-  color: #2c3e50;
-}
-
-#nav {
-  padding: 30px;
-
-  a {
-    font-weight: bold;
-    color: #2c3e50;
-
-    &.router-link-exact-active {
-      color: #42b983;
-    }
-  }
 }
 </style>
