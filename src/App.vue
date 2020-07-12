@@ -25,7 +25,10 @@
           <h3 class="font-semibold">Game</h3>
           <div>
             <ul class="list-disc ml-8">
-              <li>Choose the number of squares of the board (battle board).</li>
+              <li>
+                Choose the number of squares of the board (3x3, 6x6, 10x10)
+                (battle board).
+              </li>
               <li>Once you decide the size, click on "create room" button.</li>
               <li>You will have the message "Waiting for an opponent".</li>
               <li>
@@ -63,7 +66,7 @@
         </label>
         <div class="relative">
           <select
-            class="block appearance-none w-full bg-gray-200 border border-gray-200 text-gray-700 py-3 px-4 pr-8 rounded leading-tight focus:outline-none focus:bg-white focus:border-gray-500"
+            class="cursor-pointer block appearance-none w-full bg-gray-200 border border-gray-200 text-gray-700 py-3 px-4 pr-8 rounded leading-tight focus:outline-none focus:bg-white focus:border-gray-500"
             id="grid-state"
             v-model="size"
           >
