@@ -31,22 +31,6 @@
 
       <div class="flex p-4 items-center justify-center h-full">
         <div class="battle-field relative">
-          <!-- <div
-            v-if="!opponentId"
-            class="flex w-full h-full z-10 absolute bg-gray-300 bg-opacity-50 top-0 left-0 items-center justify-center"
-          >
-            <span>
-              wait for your opponent join the room
-            </span>
-          </div>
-          <div
-            v-if="countdown !== null"
-            class="flex w-full h-full z-10 absolute bg-gray-300 bg-opacity-50 top-0 left-0 items-center justify-center"
-          >
-            <span class="text-6xl">
-              {{ countdown }}
-            </span>
-          </div>-->
           <div
             v-if="countdown !== null"
             class="flex w-full h-full z-10 absolute bg-gray-300 bg-opacity-50 top-0 left-0 items-center justify-center"
@@ -61,19 +45,7 @@
             <span>wait for your opponent join the room</span>
           </div>
 
-          <div v-for="(row, rowIndex) of rows" :key="rowIndex" class="row" :dataset-row="rowIndex">
-            <div
-              v-for="(col, colIndex) of cols"
-              :key="colIndex"
-              :class="[
-                { 'border-l': colIndex === 0 },
-                { 'border-t': rowIndex === 0 },
-                'col border-b border-r'
-              ]"
-              @click="fill($event, rowIndex, colIndex)"
-              :data-item="`${rowIndex}-${colIndex}`"
-            ></div>
-          </div>
+          <GameBoard :cols="cols" :rows="rows" @fill="value => fill(value)" />
         </div>
       </div>
 
@@ -123,6 +95,7 @@ import { mapState, mapMutations, mapActions } from "vuex";
 import ResultFullScreen from "@/components/ResultFullScreen.vue";
 import RoomIsFull from "@/components/RoomIsFull.vue";
 import ScoreBoard from "@/components/ScoreBoard.vue";
+import GameBoard from "@/components/GameBoard.vue";
 
 export default Vue.extend({
   data() {
@@ -145,7 +118,8 @@ export default Vue.extend({
   components: {
     ResultFullScreen,
     RoomIsFull,
-    ScoreBoard
+    ScoreBoard,
+    GameBoard
   },
   computed: {
     ...mapState({
@@ -282,7 +256,7 @@ export default Vue.extend({
         this.createBoard();
       });
     },
-    fill($event: any, row: number, col: number) {
+    fill({ $event, row, col }: any) {
       const { roomId } = this.$route.params;
 
       const element = $event.target;
