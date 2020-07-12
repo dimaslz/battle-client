@@ -1,9 +1,9 @@
 <template>
-  <div>
+  <div class="BattleBoard">
     <div
       v-for="(row, rowIndex) of rows"
       :key="rowIndex"
-      class="row"
+      class="row flex"
       :dataset-row="rowIndex"
     >
       <div
@@ -12,7 +12,7 @@
         :class="[
           { 'border-l': colIndex === 0 },
           { 'border-t': rowIndex === 0 },
-          'col border-b border-r'
+          'col border-b border-r h-6 w-6 cursor-pointer hover:bg-gray-300'
         ]"
         @click="
           $event => $emit('fill', { $event, row: rowIndex, col: colIndex })
@@ -38,3 +38,18 @@ export default Vue.extend({
   }
 });
 </script>
+
+<style lang="scss">
+.BattleBoard {
+  .col {
+    &.filled {
+      // stylelint-disable
+      @apply bg-gray-500 cursor-not-allowed pointer-events-none;
+
+      &--oponent {
+        @apply bg-red-500 cursor-not-allowed pointer-events-none;
+      }
+    }
+  }
+}
+</style>

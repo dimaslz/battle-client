@@ -30,7 +30,7 @@
       <ScoreBoard :yourScore="score" :opponentScore="opponentScore" />
 
       <div class="flex p-4 items-center justify-center h-full">
-        <div class="battle-field relative">
+        <div class="battle-board relative">
           <div
             v-if="countdown !== null"
             class="flex w-full h-full z-10 absolute bg-gray-300 bg-opacity-50 top-0 left-0 items-center justify-center"
@@ -322,32 +322,3 @@ export default Vue.extend({
   }
 });
 </script>
-
-<style lang="scss">
-.battle-field {
-  .row {
-    display: flex;
-  }
-  .col {
-    // border: 1px solid #999;
-    width: 22px;
-    height: 22px;
-
-    &:hover {
-      cursor: pointer;
-      background-color: #cccccc;
-    }
-    &.filled {
-      background-color: #cccccc;
-      cursor: not-allowed;
-      pointer-events: none;
-
-      &--oponent {
-        background-color: red;
-        cursor: not-allowed;
-        pointer-events: none;
-      }
-    }
-  }
-}
-</style>
