@@ -9,45 +9,32 @@
 
     <!-- // Room info -->
     <div class="p-2 text-center bg-gray-100">
-      <span class="font-semibold">room: </span><span>{{ roomId }}</span>
+      <span class="font-semibold">room:</span>
+      <span>{{ roomId }}</span>
     </div>
 
     <!-- // User is not joining a room -->
-    <div v-if="!joined" class="mt-4 h-full">
-      <div class="p-4">
-        This room is full. The game it is only for two players.
-      </div>
-      <div class="text-sm p-2 w-full h-full flex flex-col items-center">
-        <button
-          @click="createRoom()"
-          class="bg-blue-500 hover:bg-blue-700 text-white font-bold py-2 px-4 rounded-full mt-4"
-        >
-          Create room
-        </button>
-      </div>
-    </div>
+    <RoomIsFull v-if="!joined" @createRoom="createRoom" />
 
     <div v-if="joined" class="flex flex-col h-full">
       <!-- // Your opponent -->
       <div class="mt-4 p-2 text-right">
         <div v-if="opponentId">
-          <span class="font-semibold">you are playing against: </span
-          >{{ opponentId }}
+          <span class="font-semibold">you are playing against:</span>
+          {{ opponentId }}
         </div>
-        <div v-if="!opponentId">
-          waiting for opponent...
-        </div>
+        <div v-if="!opponentId">waiting for opponent...</div>
       </div>
 
       <!-- // Scores -->
       <div class="flex">
         <div class="w-full p-4 bg-green-300">
-          <span class="font-semibold">your score: </span
-          ><span>{{ score }}</span>
+          <span class="font-semibold">your score:</span>
+          <span>{{ score }}</span>
         </div>
         <div class="w-full p-4 bg-red-300">
-          <span class="font-semibold">opponent score: </span
-          ><span>{{ opponentScore }}</span>
+          <span class="font-semibold">opponent score:</span>
+          <span>{{ opponentScore }}</span>
         </div>
       </div>
 
@@ -68,31 +55,22 @@
             <span class="text-6xl">
               {{ countdown }}
             </span>
-          </div> -->
+          </div>-->
           <div
             v-if="countdown !== null"
             class="flex w-full h-full z-10 absolute bg-gray-300 bg-opacity-50 top-0 left-0 items-center justify-center"
           >
-            <span class="text-6xl">
-              {{ countdown }}
-            </span>
+            <span class="text-6xl">{{ countdown }}</span>
           </div>
 
           <div
             v-if="!gameStarted"
             class="flex w-full h-full z-10 absolute bg-gray-300 bg-opacity-50 top-0 left-0 items-center justify-center"
           >
-            <span>
-              wait for your opponent join the room
-            </span>
+            <span>wait for your opponent join the room</span>
           </div>
 
-          <div
-            v-for="(row, rowIndex) of rows"
-            :key="rowIndex"
-            class="row"
-            :dataset-row="rowIndex"
-          >
+          <div v-for="(row, rowIndex) of rows" :key="rowIndex" class="row" :dataset-row="rowIndex">
             <div
               v-for="(col, colIndex) of cols"
               :key="colIndex"
@@ -114,23 +92,21 @@
           <button
             @click="createRoom()"
             class="bg-blue-500 hover:bg-blue-700 text-white font-bold py-2 px-4 rounded-full"
-          >
-            Create new room
-          </button>
+          >Create new room</button>
         </div>
       </div>
       <!-- // Share link -->
       <div class="text-sm p-2 border-b-4 border-green-600 bg-green-300 w-full">
         <div class="flex flex-col items-center">
-          Share the following link to your opponent: <br />
+          Share the following link to your opponent:
+          <br />
           <span class="font-semibold">{{ link }}</span>
         </div>
         <div class="flex flex-col items-center" v-if="false">
-          Introduce the player ID of your opponent: <br />
+          Introduce the player ID of your opponent:
+          <br />
           <form class="w-full max-w-sm">
-            <div
-              class="flex items-center border-b border-b-2 border-teal-500 py-2"
-            >
+            <div class="flex items-center border-b border-b-2 border-teal-500 py-2">
               <input
                 class="appearance-none bg-transparent border-none w-full text-gray-700 mr-3 py-1 px-2 leading-tight focus:outline-none"
                 type="text"
@@ -140,9 +116,7 @@
               <button
                 class="flex-shrink-0 bg-teal-500 hover:bg-teal-700 border-teal-500 hover:border-teal-700 text-sm border-4 text-white py-1 px-2 rounded"
                 type="button"
-              >
-                send challenge
-              </button>
+              >send challenge</button>
             </div>
           </form>
         </div>
@@ -156,6 +130,7 @@ import Vue from "vue";
 import { mapState, mapMutations, mapActions } from "vuex";
 
 import ResultFullScreen from "@/components/ResultFullScreen.vue";
+import RoomIsFull from "@/components/RoomIsFull.vue";
 
 export default Vue.extend({
   data() {
@@ -176,7 +151,8 @@ export default Vue.extend({
     };
   },
   components: {
-    ResultFullScreen
+    ResultFullScreen,
+    RoomIsFull
   },
   computed: {
     ...mapState({
