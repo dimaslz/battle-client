@@ -14,7 +14,7 @@
     </div>
 
     <!-- // User is not joining a room -->
-    <RoomIsFull v-if="!joined" @createRoom="() => createRoom()" />
+    <RoomIsFull v-if="!joined" @createRoom="() => $router.push('/')" />
 
     <div v-if="joined" class="flex flex-col h-full">
       <!-- // Your opponent -->
@@ -52,10 +52,11 @@
       <!-- // Start new game -->
       <div class="text-sm p-2 w-full">
         <div class="text-sm p-2 w-full h-full flex flex-col items-center">
-          <button
-            @click="createRoom()"
-            class="bg-blue-500 hover:bg-blue-700 text-white font-bold py-2 px-4 rounded-full"
-          >Create new room</button>
+          <router-link
+            to="/"
+            class="cursor-pointer bg-blue-500 hover:bg-blue-700 text-white font-bold py-2 px-4 rounded-full"
+            >Create new room</router-link
+          >
         </div>
       </div>
       <!-- // Share link -->
@@ -69,7 +70,9 @@
           Introduce the player ID of your opponent:
           <br />
           <form class="w-full max-w-sm">
-            <div class="flex items-center border-b border-b-2 border-teal-500 py-2">
+            <div
+              class="flex items-center border-b border-b-2 border-teal-500 py-2"
+            >
               <input
                 class="appearance-none bg-transparent border-none w-full text-gray-700 mr-3 py-1 px-2 leading-tight focus:outline-none"
                 type="text"
@@ -79,7 +82,9 @@
               <button
                 class="flex-shrink-0 bg-teal-500 hover:bg-teal-700 border-teal-500 hover:border-teal-700 text-sm border-4 text-white py-1 px-2 rounded"
                 type="button"
-              >send challenge</button>
+              >
+                send challenge
+              </button>
             </div>
           </form>
         </div>
@@ -278,9 +283,6 @@ export default Vue.extend({
         data: { row, col },
         score: this.$data.score
       });
-    },
-    async createRoom() {
-      this.$router.push("/");
     },
     reloadGame() {
       console.log("reloadGame");
