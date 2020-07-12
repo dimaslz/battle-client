@@ -14,7 +14,7 @@
     </div>
 
     <!-- // User is not joining a room -->
-    <RoomIsFull v-if="!joined" @createRoom="createRoom" />
+    <RoomIsFull v-if="!joined" @createRoom="() => createRoom()" />
 
     <div v-if="joined" class="flex flex-col h-full">
       <!-- // Your opponent -->
@@ -26,17 +26,8 @@
         <div v-if="!opponentId">waiting for opponent...</div>
       </div>
 
-      <!-- // Scores -->
-      <div class="flex">
-        <div class="w-full p-4 bg-green-300">
-          <span class="font-semibold">your score:</span>
-          <span>{{ score }}</span>
-        </div>
-        <div class="w-full p-4 bg-red-300">
-          <span class="font-semibold">opponent score:</span>
-          <span>{{ opponentScore }}</span>
-        </div>
-      </div>
+      <!-- // ScoreBoard -->
+      <ScoreBoard :yourScore="score" :opponentScore="opponentScore" />
 
       <div class="flex p-4 items-center justify-center h-full">
         <div class="battle-field relative">
@@ -131,6 +122,7 @@ import { mapState, mapMutations, mapActions } from "vuex";
 
 import ResultFullScreen from "@/components/ResultFullScreen.vue";
 import RoomIsFull from "@/components/RoomIsFull.vue";
+import ScoreBoard from "@/components/ScoreBoard.vue";
 
 export default Vue.extend({
   data() {
@@ -152,7 +144,8 @@ export default Vue.extend({
   },
   components: {
     ResultFullScreen,
-    RoomIsFull
+    RoomIsFull,
+    ScoreBoard
   },
   computed: {
     ...mapState({
