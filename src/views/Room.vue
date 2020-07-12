@@ -1,39 +1,11 @@
 <template>
   <div id="room" class="flex w-full flex-col h-full">
-    <!-- Winner overlay -->
-    <div
-      v-if="winner"
-      class="fixed top-0 left-0 flex flex-col items-center justify-center w-full h-full bg-green-500 bg-opacity-75 z-50 text-white"
-    >
-      <div class="text-4xl font-semibold">You have won!!</div>
-      <div class="flex items-center justify-center">
-        <button
-          class="flex-shrink-0 bg-blue-500 hover:bg-blue-700 border-blue-500 hover:border-blue-700 text-sm border-4 text-white py-1 px-2 rounded"
-          type="button"
-          @click="reloadGame"
-        >
-          reload match
-        </button>
-      </div>
-    </div>
-    <!-- // Winner overlay -->
-    <!-- Loser overlay -->
-    <div
-      v-if="loser"
-      class="fixed top-0 left-0 flex flex-col items-center justify-center w-full h-full bg-red-500 bg-opacity-75 z-50 text-white"
-    >
-      <div class="text-4xl font-semibold">You have lost!!</div>
-      <div class="flex items-center justify-center">
-        <button
-          class="flex-shrink-0 bg-blue-500 hover:bg-blue-700 border-blue-500 hover:border-blue-700 text-sm border-4 text-white py-1 px-2 rounded"
-          type="button"
-          @click="reloadGame"
-        >
-          reload match
-        </button>
-      </div>
-    </div>
-    <!-- // Loser overlay -->
+    <ResultFullScreen
+      v-if="winner || loser"
+      @reload="reloadGame"
+      :title="(winner && 'You have won!!') || (loser && 'You have lost!!')"
+      :status="(winner && 'winner') || (loser && 'loser')"
+    />
 
     <!-- // Room info -->
     <div class="p-2 text-center bg-gray-100">
@@ -183,6 +155,8 @@
 import Vue from "vue";
 import { mapState, mapMutations, mapActions } from "vuex";
 
+import ResultFullScreen from "@/components/ResultFullScreen.vue";
+
 export default Vue.extend({
   data() {
     return {
@@ -200,6 +174,9 @@ export default Vue.extend({
       loser: null,
       timeoutInstance: 0
     };
+  },
+  components: {
+    ResultFullScreen
   },
   computed: {
     ...mapState({
