@@ -7,14 +7,30 @@ export default class Api {
     this.host = API_URL;
   }
 
-  createRoom(roomId: string, userId: string) {
+  createRoom(roomId: string, userId: string, clientId: string, size: number) {
     return axios({
       method: "POST",
       url: `${API_URL}/room`,
       data: {
         roomId,
         userId,
+        clientId,
+        size,
       },
+    });
+  }
+
+  resetRoom(roomId: string) {
+    return axios({
+      method: "POST",
+      url: `${API_URL}/room/${roomId}/reset`,
+    });
+  }
+
+  getRoom(roomId: string) {
+    return axios({
+      method: "GET",
+      url: `${API_URL}/room/${roomId}`,
     });
   }
 

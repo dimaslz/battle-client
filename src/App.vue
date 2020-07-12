@@ -12,27 +12,33 @@
       </a>
     </div>
     <div class="text-3xl p-12 uppercase">
-      Battle Click
+      Battle Board
     </div>
     <div class="text-sm p-4">
-      Battle Click it is a small multiplayer game. There are 2 kind of games.
+      <p>
+        Battle Board it is a small multiplayer game. At the moment just one game
+        availible, but I will ad new as soon as possible.
+      </p>
 
       <ul class="mt-3">
         <li class="text-left mt-2">
-          <span class="font-semibold">- Game #1: </span>
-          <span
-            >In a board of 100 squares, you need to fill the maximum squares,
-            more than your opponent in 30 seconds.</span
-          >
-        </li>
-        <li class="text-left mt-2">
-          <span class="font-semibold">- Game #2: </span>
-          <span
-            >In a board of 100 squares, you can fill any square as you want,
-            your opponent will do the same. After 30 seconds, the game will
-            finish, and you will get points per each square the is not match
-            with your opponent.</span
-          >
+          <h3 class="font-semibold">Game</h3>
+          <div>
+            <ul class="list-disc ml-8">
+              <li>Choose the number of squares of the board (battle board).</li>
+              <li>Once you decide the size, click on "create room" button.</li>
+              <li>You will have the message "Waiting for an opponent".</li>
+              <li>
+                Share the link with a friend and after will start a counter.
+              </li>
+              <li>
+                When the counter says "Go!", you need to click each square.
+              </li>
+              <li>
+                The player with most squared clicked will win the battle.
+              </li>
+            </ul>
+          </div>
         </li>
       </ul>
     </div>
@@ -48,6 +54,39 @@
       v-if="!$route.params.roomId"
       class="text-sm p-2 w-full h-full flex flex-col items-center"
     >
+      <div class="w-full md:w-1/3 px-3 mb-6 md:mb-0">
+        <label
+          class="block uppercase tracking-wide text-gray-700 text-xs font-bold mb-2"
+          for="grid-state"
+        >
+          State
+        </label>
+        <div class="relative">
+          <select
+            class="block appearance-none w-full bg-gray-200 border border-gray-200 text-gray-700 py-3 px-4 pr-8 rounded leading-tight focus:outline-none focus:bg-white focus:border-gray-500"
+            id="grid-state"
+            v-model="size"
+          >
+            <option value="9">3x3</option>
+            <option value="36">6x6</option>
+            <option value="100">10x10</option>
+          </select>
+          <div
+            class="pointer-events-none absolute inset-y-0 right-0 flex items-center px-2 text-gray-700"
+          >
+            <svg
+              class="fill-current h-4 w-4"
+              xmlns="http://www.w3.org/2000/svg"
+              viewBox="0 0 20 20"
+            >
+              <path
+                d="M9.293 12.95l.707.707L15.657 8l-1.414-1.414L10 10.828 5.757 6.586 4.343 8z"
+              />
+            </svg>
+          </div>
+        </div>
+      </div>
+
       <button
         @click="_createRoom()"
         class="bg-blue-500 hover:bg-blue-700 text-white font-bold py-2 px-4 rounded-full mt-4"
@@ -71,7 +110,8 @@ import { uuid } from "@/utils";
 export default Vue.extend({
   data() {
     return {
-      loading: false
+      loading: false,
+      size: 9
     };
   },
   async mounted() {
@@ -84,7 +124,7 @@ export default Vue.extend({
   },
   methods: {
     _createRoom() {
-      this.createRoom().then((roomId: string) => {
+      this.createRoom(this.size).then((roomId: string) => {
         this.$router.push(`/${roomId}`);
         this.$socket.emit("create", { roomId });
       });

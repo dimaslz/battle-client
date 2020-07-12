@@ -3,17 +3,35 @@
     <!-- Winner overlay -->
     <div
       v-if="winner"
-      class="fixed top-0 left-0 flex items-center justify-center w-full h-full bg-green-500 bg-opacity-75 z-50 text-white"
+      class="fixed top-0 left-0 flex flex-col items-center justify-center w-full h-full bg-green-500 bg-opacity-75 z-50 text-white"
     >
       <div class="text-4xl font-semibold">You have won!!</div>
+      <div class="flex items-center justify-center">
+        <button
+          class="flex-shrink-0 bg-blue-500 hover:bg-blue-700 border-blue-500 hover:border-blue-700 text-sm border-4 text-white py-1 px-2 rounded"
+          type="button"
+          @click="reloadGame"
+        >
+          reload match
+        </button>
+      </div>
     </div>
     <!-- // Winner overlay -->
     <!-- Loser overlay -->
     <div
       v-if="loser"
-      class="fixed top-0 left-0 flex items-center justify-center w-full h-full bg-red-500 bg-opacity-75 z-50 text-white"
+      class="fixed top-0 left-0 flex flex-col items-center justify-center w-full h-full bg-red-500 bg-opacity-75 z-50 text-white"
     >
       <div class="text-4xl font-semibold">You have lost!!</div>
+      <div class="flex items-center justify-center">
+        <button
+          class="flex-shrink-0 bg-blue-500 hover:bg-blue-700 border-blue-500 hover:border-blue-700 text-sm border-4 text-white py-1 px-2 rounded"
+          type="button"
+          @click="reloadGame"
+        >
+          reload match
+        </button>
+      </div>
     </div>
     <!-- // Loser overlay -->
 
@@ -29,7 +47,7 @@
       </div>
       <div class="text-sm p-2 w-full h-full flex flex-col items-center">
         <button
-          @click="_createRoom()"
+          @click="createRoom()"
           class="bg-blue-500 hover:bg-blue-700 text-white font-bold py-2 px-4 rounded-full mt-4"
         >
           Create room
@@ -122,7 +140,7 @@
       <div class="text-sm p-2 w-full">
         <div class="text-sm p-2 w-full h-full flex flex-col items-center">
           <button
-            @click="_createRoom()"
+            @click="createRoom()"
             class="bg-blue-500 hover:bg-blue-700 text-white font-bold py-2 px-4 rounded-full"
           >
             Create new room
@@ -179,7 +197,8 @@ export default Vue.extend({
       countdown: null,
       link: "",
       winner: null,
-      loser: null
+      loser: null,
+      timeoutInstance: 0
     };
   },
   computed: {
@@ -188,18 +207,33 @@ export default Vue.extend({
       joined: (state: any) => state.me.joined,
       opponentId: (state: any) => state.opponent.name,
       roomId: (state: any) => state.game.roomId,
-      clientId: (state: any) => state.me.clientId
+      clientId: (state: any) => state.me.clientId,
+      roomSize: (state: any) => state.game.size
     })
   },
-  created() {
+  async created() {
+    this.$data.link = window.location.href;
+    const roomId = this.$route.params.roomId;
+    if (roomId) {
+      const roomData = await this.getRoom(roomId);
+      if (roomData?.size) {
+        this.createBoard();
+      } else {
+        this.$router.push("/");
+      }
+    } else {
+      this.$router.push("/");
+    }
+
     this.$socket.on("countdown-ping", (data: any) => {
+      console.log("this.$data.countdown", this.$data.countdown);
       if (this.$data.countdown < 0) {
         this.$data.countdown = "GO!";
         setTimeout(() => {
           this.$data.countdown = null;
         }, 200);
       } else {
-        setTimeout(() => {
+        this.timeoutInstance = setTimeout(() => {
           this.$data.countdown--;
           this.$socket.emit("countdown-pong", {
             userId: this.userId,
@@ -209,7 +243,23 @@ export default Vue.extend({
         }, 1000);
       }
     });
+    this.$socket.on("opponent-left", () => {
+      console.log("OPPONENT LEFT");
+      this.$data.winner = false;
+      this.$data.loser = false;
+      this.$data.opponentId = null;
+      this.$data.score = 0;
+      this.$data.opponentScore = 0;
+      this.$data.countdown = null;
+      this.$data.gameStarted = false;
+      this.$data.oponentJoined = false;
+      this.opponentLeft();
+      if (this.timeoutInstance) {
+        clearTimeout(this.timeoutInstance);
+      }
+    });
     this.$socket.on("joined", (data: any) => {
+      console.log("Opponent joined!");
       this.$data.oponentJoined = true;
       const userId = data.userId;
       this.opponentSetName(userId);
@@ -219,6 +269,7 @@ export default Vue.extend({
         this.$socket.emit("start-game", {
           roomId: this.roomId
         });
+        this.$socket.emit("countdown-ping");
       }, 200);
     });
 
@@ -232,6 +283,7 @@ export default Vue.extend({
       }
     });
     this.$socket.on("start-game", (data: any) => {
+      console.log("socket event: start-game");
       this.$data.countdown = 5;
       this.$data.gameStarted = true;
 
@@ -252,26 +304,15 @@ export default Vue.extend({
       }
     });
     this.$socket.on("reset-game", () => {
-      this.createBoard();
+      console.log("Reset game");
       this.$data.winner = false;
       this.$data.loser = false;
-      this.$data.opponentId = null;
       this.$data.score = 0;
       this.$data.opponentScore = 0;
-      this.$data.countdown = null;
+      this.$data.countdown = 5;
       this.$data.gameStarted = false;
-      this.$data.oponentJoined = false;
 
-      [...document.querySelectorAll("[data-item].col.filled")].forEach(
-        element => {
-          element.classList.remove("filled");
-        }
-      );
-      [...document.querySelectorAll("[data-item].col.filled--oponent")].forEach(
-        element => {
-          element.classList.remove("filled--oponent");
-        }
-      );
+      this.createBoard();
     });
   },
   methods: {
@@ -279,8 +320,10 @@ export default Vue.extend({
       this.cols = [];
       this.rows = [];
       this.$nextTick(() => {
-        this.cols = Array.from(Array(3).keys());
-        this.rows = Array.from(Array(3).keys());
+        console.log("this.roomSize, ", this.roomSize, Math.sqrt(this.roomSize));
+        const sqrt = Math.sqrt(this.roomSize);
+        this.cols = Array.from(Array(sqrt).keys());
+        this.rows = Array.from(Array(sqrt).keys());
       });
     },
     _joinRoom() {
@@ -316,36 +359,29 @@ export default Vue.extend({
         score: this.$data.score
       });
     },
-    async _createRoom() {
-      this.$data.score = 0;
-      this.$data.opponentScore = 0;
-      [...document.querySelectorAll("[data-item].col.filled")].forEach(
-        element => {
-          element.classList.remove("filled");
-        }
-      );
-      [...document.querySelectorAll("[data-item].col.filled--oponent")].forEach(
-        element => {
-          element.classList.remove("filled--oponent");
-        }
-      );
-
-      await this.leaveRoom();
-      await this.createRoom().then((roomId: string) => {
-        this.$router.push(`/${roomId}`);
-        this.$socket.emit("create", { roomId });
-        this.$data.room = roomId;
-        this._joinRoom();
-      });
+    async createRoom() {
+      this.$router.push("/");
+    },
+    reloadGame() {
+      console.log("reloadGame");
+      this.resetGame();
+      setTimeout(() => {
+        this.$data.countdown = 5;
+        this.$socket.emit("start-game", {
+          roomId: this.roomId
+        });
+        this.$socket.emit("countdown-ping");
+      }, 200);
     },
     ...mapMutations("me", {
       meUpdateScore: "updateScore"
     }),
     ...mapMutations("opponent", {
-      opponentSetName: "setName"
+      opponentSetName: "setName",
+      opponentLeft: "opponentLeft"
     }),
     ...mapMutations("game", ["setRoomName"]),
-    ...mapActions("game", ["createRoom", "leaveRoom", "joinRoom"])
+    ...mapActions("game", ["leaveRoom", "joinRoom", "getRoom", "resetGame"])
   },
   async destroyed() {
     await this.leaveRoom();
