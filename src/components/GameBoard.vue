@@ -12,7 +12,7 @@
         :class="[
           { 'border-l': colIndex === 0 },
           { 'border-t': rowIndex === 0 },
-          'col border-b border-r h-6 w-6 cursor-pointer hover:bg-gray-300'
+          'col border-b border-r h-8 w-8 cursor-pointer hover:bg-gray-300',
         ]"
         @click="
           $event => $emit('fill', { $event, row: rowIndex, col: colIndex })
@@ -29,13 +29,13 @@ export default Vue.extend({
   props: {
     rows: {
       type: Array,
-      default: () => []
+      default: () => [],
     },
     cols: {
       type: Array,
-      default: () => []
-    }
-  }
+      default: () => [],
+    },
+  },
 });
 </script>
 
