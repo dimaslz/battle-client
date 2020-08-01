@@ -45,7 +45,7 @@
             <span>wait for your opponent join the room</span>
           </div>
 
-          <GameBoard :cols="cols" :rows="rows" @fill="value => fill(value)" />
+          <GameBoard :cols="cols" :rows="rows" @fill="(value) => fill(value)" />
         </div>
       </div>
 
@@ -117,14 +117,14 @@ export default Vue.extend({
       link: "",
       winner: null,
       loser: null,
-      timeoutInstance: 0
+      timeoutInstance: 0,
     };
   },
   components: {
     ResultFullScreen,
     RoomIsFull,
     ScoreBoard,
-    GameBoard
+    GameBoard,
   },
   computed: {
     ...mapState({
@@ -133,8 +133,8 @@ export default Vue.extend({
       opponentId: (state: any) => state.opponent.name,
       roomId: (state: any) => state.game.roomId,
       clientId: (state: any) => state.me.clientId,
-      roomSize: (state: any) => state.game.size
-    })
+      roomSize: (state: any) => state.game.size,
+    }),
   },
   async created() {
     this.$data.link = window.location.href;
@@ -150,8 +150,7 @@ export default Vue.extend({
       this.$router.push("/");
     }
 
-    this.$socket.on("countdown-ping", (data: any) => {
-      console.log("this.$data.countdown", this.$data.countdown);
+    this.$socket.on("countdown-ping", (): void => {
       if (this.$data.countdown < 0) {
         this.$data.countdown = "GO!";
         setTimeout(() => {
@@ -163,13 +162,12 @@ export default Vue.extend({
           this.$socket.emit("countdown-pong", {
             userId: this.userId,
             roomId: this.roomId,
-            countdown: this.$data.countdown
+            countdown: this.$data.countdown,
           });
         }, 1000);
       }
     });
     this.$socket.on("opponent-left", () => {
-      console.log("OPPONENT LEFT");
       this.$data.winner = false;
       this.$data.loser = false;
       this.$data.opponentId = null;
@@ -184,7 +182,6 @@ export default Vue.extend({
       }
     });
     this.$socket.on("joined", (data: any) => {
-      console.log("Opponent joined!");
       this.$data.oponentJoined = true;
       const userId = data.userId;
       this.opponentSetName(userId);
@@ -192,7 +189,7 @@ export default Vue.extend({
       setTimeout(() => {
         this.$data.cowntdown = 5;
         this.$socket.emit("start-game", {
-          roomId: this.roomId
+          roomId: this.roomId,
         });
         this.$socket.emit("countdown-ping");
       }, 200);
@@ -208,7 +205,6 @@ export default Vue.extend({
       }
     });
     this.$socket.on("start-game", (data: any) => {
-      console.log("socket event: start-game");
       this.$data.countdown = 5;
       this.$data.gameStarted = true;
 
@@ -216,7 +212,7 @@ export default Vue.extend({
         this.$socket.emit("countdown-pong", {
           userId: this.userId,
           roomId: this.roomId,
-          countdown: 4
+          countdown: 4,
         });
       }, 1000);
     });
@@ -229,7 +225,6 @@ export default Vue.extend({
       }
     });
     this.$socket.on("reset-game", () => {
-      console.log("Reset game");
       this.$data.winner = false;
       this.$data.loser = false;
       this.$data.score = 0;
@@ -245,7 +240,6 @@ export default Vue.extend({
       this.cols = [];
       this.rows = [];
       this.$nextTick(() => {
-        console.log("this.roomSize, ", this.roomSize, Math.sqrt(this.roomSize));
         const sqrt = Math.sqrt(this.roomSize);
         this.cols = Array.from(Array(sqrt).keys());
         this.rows = Array.from(Array(sqrt).keys());
@@ -281,29 +275,28 @@ export default Vue.extend({
         roomId,
         userId: this.userId,
         data: { row, col },
-        score: this.$data.score
+        score: this.$data.score,
       });
     },
     reloadGame() {
-      console.log("reloadGame");
       this.resetGame();
       setTimeout(() => {
         this.$data.countdown = 5;
         this.$socket.emit("start-game", {
-          roomId: this.roomId
+          roomId: this.roomId,
         });
         this.$socket.emit("countdown-ping");
       }, 200);
     },
     ...mapMutations("me", {
-      meUpdateScore: "updateScore"
+      meUpdateScore: "updateScore",
     }),
     ...mapMutations("opponent", {
       opponentSetName: "setName",
-      opponentLeft: "opponentLeft"
+      opponentLeft: "opponentLeft",
     }),
     ...mapMutations("game", ["setRoomName"]),
-    ...mapActions("game", ["leaveRoom", "joinRoom", "getRoom", "resetGame"])
+    ...mapActions("game", ["leaveRoom", "joinRoom", "getRoom", "resetGame"]),
   },
   async destroyed() {
     await this.leaveRoom();
@@ -315,10 +308,9 @@ export default Vue.extend({
     this.$socket.off(`game-finished`);
   },
   watch: {
-    clientId: function() {
-      console.log("DDFF", this.clientId);
+    clientId: function () {
       if (this.clientId) this._joinRoom();
-    }
-  }
+    },
+  },
 });
 </script>

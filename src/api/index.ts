@@ -37,7 +37,7 @@ export default class Api {
   leaveRoom(roomId: string, userId: string) {
     return axios({
       method: "POST",
-      url: `${API_URL}/leave/${roomId}`,
+      url: `${API_URL}/room/${roomId}/leave`,
       data: {
         userId,
       },
@@ -47,7 +47,7 @@ export default class Api {
   joinRoom(roomId: string, userId: string, clientId: string) {
     return axios({
       method: "POST",
-      url: `${API_URL}/join/${roomId}`,
+      url: `${API_URL}/room/${roomId}/join`,
       data: {
         userId,
         clientId,

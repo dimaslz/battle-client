@@ -64,7 +64,6 @@ export default {
     },
     async getRoom({ commit, state, rootState }: any, roomId: string) {
       const { data }: any = await API.getRoom(roomId);
-      console.log("data", data);
       commit("setRoomName", roomId);
       commit("setRoomSize", data.size);
 
@@ -73,12 +72,10 @@ export default {
     async resetGame({ commit, state, rootState }: any) {
       const { roomId } = state;
       const { data }: any = await API.resetRoom(roomId);
-      console.log("data", data);
     },
     async joinRoom({ commit, rootState, state }: any, { roomId }: any) {
       const userId = rootState.me.name;
       const clientId = rootState.me.clientId;
-      console.log("clientId", clientId);
 
       commit("setRoomName", roomId);
 
