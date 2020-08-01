@@ -15,7 +15,7 @@
           'col border-b border-r h-8 w-8 cursor-pointer hover:bg-gray-300',
         ]"
         @click="
-          $event => $emit('fill', { $event, row: rowIndex, col: colIndex })
+          ($event) => $emit('fill', { $event, row: rowIndex, col: colIndex })
         "
         :data-item="`${rowIndex}-${colIndex}`"
       ></div>
@@ -29,11 +29,11 @@ export default Vue.extend({
   props: {
     rows: {
       type: Array,
-      default: () => [],
+      default: () => [] as any[],
     },
     cols: {
       type: Array,
-      default: () => [],
+      default: () => [] as any[],
     },
   },
 });
@@ -43,7 +43,6 @@ export default Vue.extend({
 .BattleBoard {
   .col {
     &.filled {
-      // stylelint-disable
       @apply bg-gray-500 cursor-not-allowed pointer-events-none;
 
       &--oponent {

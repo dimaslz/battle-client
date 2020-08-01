@@ -17,12 +17,12 @@ export default Vue.extend({
   props: {
     yourScore: {
       type: Number,
-      default: 0
+      default: 0,
     },
     opponentScore: {
       type: Number,
-      default: 0
-    }
-  }
+      default: 0,
+    },
+  },
 });
 </script>

@@ -3,7 +3,7 @@
     class="fixed top-0 left-0 flex flex-col items-center justify-center w-full h-full bg-opacity-75 z-50 text-white"
     :class="[
       { 'bg-green-500': status === 'winner' },
-      { 'bg-red-500': status === 'loser' }
+      { 'bg-red-500': status === 'loser' },
     ]"
   >
     <div class="text-4xl font-semibold">{{ title }}</div>
@@ -25,12 +25,12 @@ export default Vue.extend({
   props: {
     title: {
       type: String,
-      default: ""
+      default: "",
     },
     status: {
       type: String,
-      default: "winner"
-    }
-  }
+      default: "winner",
+    },
+  },
 });
 </script>
