@@ -14,14 +14,14 @@ This simple game it's just for fun!. One of my restlessness was to use SocketIO 
 
 ## TODO
 
-- [] Add unit tests (I start it just prototyping, now I think is something that could be good to keep safe)
-- [] Improve board UI
-- [] Improve count down synchronization
-- [] Cached your data, playerID and always have the same
-- [] Maybe can create an account? (send me a issue if you like the idea)
-- [] Improve feedback with the user
-- [] Port to mobile app
-- [] ...
+- [ ] Add unit tests (I start it just prototyping, now I think is something that could be good to keep safe)
+- [ ] Improve board UI
+- [ ] Improve count down synchronization
+- [ ] Cached your data, playerID and always have the same
+- [ ] Maybe can create an account? (send me a issue if you like the idea)
+- [ ] Improve feedback with the user
+- [ ] Port to mobile app
+- [ ] ...
 
 ## Project setup
 
