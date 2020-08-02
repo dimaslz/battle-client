@@ -1,7 +1,10 @@
 {
-  "name": "client",
-  "version": "0.1.0",
+  "name": "battle-board-client",
+  "version": "1.0.0",
+  "description": "Client code for Battle Board game, a web game developed in NestJS + SocketIO and VueJS in the client side.",
+  "author": "Dimas López (dimaslz) <me@dimaslz.io>",
   "private": true,
+  "license": "MIT",
   "scripts": {
     "serve": "vue-cli-service serve",
     "start": "serve -s dist",
