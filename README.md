@@ -35,6 +35,8 @@ yarn install
 yarn serve
 ```
 
+NOTE: Remember clone the backend [https://github.com/dimaslz/battle-server](https://github.com/dimaslz/battle-server), install and run `yarn start:debug`.
+
 ### Compiles and minifies for production
 
 ```
