@@ -11,7 +11,7 @@
         target="_blank"
         class="flex text-gray-300 hover:text-gray-100 px-10 py-1 border border-white my-1 border-dashed"
       >
-        Fork me on GitHub
+        Star me on GitHub
       </a>
     </div>
     <div class="text-3xl p-12 uppercase">
@@ -117,7 +117,7 @@ export default Vue.extend({
   data() {
     return {
       loading: false,
-      size: 9
+      size: 9,
     };
   },
   async mounted() {
@@ -125,8 +125,8 @@ export default Vue.extend({
   },
   computed: {
     ...mapState("me", {
-      userId: (state: any): string => state.name
-    })
+      userId: (state: any): string => state.name,
+    }),
   },
   methods: {
     _createRoom() {
@@ -138,8 +138,8 @@ export default Vue.extend({
       });
     },
     ...mapActions("game", ["createRoom"]),
-    ...mapMutations("me", ["setName"])
-  }
+    ...mapMutations("me", ["setName"]),
+  },
 });
 </script>
 
