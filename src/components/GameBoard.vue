@@ -1,5 +1,5 @@
 <template>
-  <div class="BattleBoard">
+  <div class="GameBoard flex items-center flex-col">
     <div
       v-for="(row, rowIndex) of rows"
       :key="rowIndex"
@@ -40,7 +40,7 @@ export default Vue.extend({
 </script>
 
 <style lang="scss">
-.BattleBoard {
+.GameBoard {
   .col {
     &.filled {
       @apply bg-gray-500 cursor-not-allowed pointer-events-none;

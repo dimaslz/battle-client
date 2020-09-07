@@ -8,15 +8,15 @@
     />
 
     <!-- // Room info -->
-    <div class="p-2 text-center bg-gray-100">
-      <span class="font-semibold">room:</span>
+    <div class="Room p-2 text-center">
+      <span class="font-semibold">room: </span>
       <span>{{ roomId }}</span>
     </div>
 
     <!-- // User is not joining a room -->
     <RoomIsFull v-if="!joined" @createRoom="() => $router.push('/')" />
 
-    <div v-if="joined" class="flex flex-col h-full">
+    <div v-if="joined" class="h-full">
       <!-- // Your opponent -->
       <div class="mt-4 p-2 text-right">
         <div v-if="opponentId">
@@ -29,18 +29,18 @@
       <!-- // ScoreBoard -->
       <ScoreBoard :yourScore="score" :opponentScore="opponentScore" />
 
-      <div class="flex p-4 items-center justify-center h-full">
-        <div class="battle-board relative">
+      <div class="BattleView flex p-4 items-center justify-center h-full">
+        <div class="relative flex">
           <div
             v-if="countdown !== null"
-            class="flex w-full h-full z-10 absolute bg-gray-300 bg-opacity-50 top-0 left-0 items-center justify-center"
+            class="BattleView__countdown flex w-full h-full z-10 absolute bg-gray-300 bg-opacity-50 top-0 left-0 items-center justify-center"
           >
             <span class="text-6xl">{{ countdown }}</span>
           </div>
 
           <div
             v-if="!gameStarted"
-            class="flex w-full h-full z-10 absolute bg-gray-300 bg-opacity-50 top-0 left-0 items-center justify-center"
+            class="BattleView__waiting-for-opponent flex w-full h-full z-10 absolute bg-gray-300 bg-opacity-50 top-0 left-0 items-center justify-center"
           >
             <span>wait for your opponent join the room</span>
           </div>
@@ -50,7 +50,7 @@
       </div>
 
       <!-- // Start new game -->
-      <div class="text-sm p-2 w-full">
+      <div class="StartNewGame text-sm p-2 w-full">
         <div class="text-sm p-2 w-full h-full flex flex-col items-center">
           <router-link
             to="/"
@@ -60,7 +60,7 @@
         </div>
       </div>
       <!-- // Share link -->
-      <div class="text-sm p-2 border-b-4 border-green-600 bg-green-300 w-full">
+      <div class="Share text-sm p-2 border-b-4 border-green-600 bg-green-300 w-full">
         <div class="flex flex-col items-center">
           Share the following link to your opponent:
           <br />
